@@ -115,14 +115,21 @@ executable my-news-generator
                     , aeson
                     , bytestring
                     , containers
+                    , directory
+                    , interpolatedstring-perl6
                     , http-client
                     , http-client-tls
                     , http-conduit
                     , http-types
+                    , microlens-th
+                    , microlens-platform
                     , mtl
+                    , prettyprinter
                     , safe
+                    , text
                     , curl
                     , download-curl
+                    , uniplate
 
     -- Directories containing source files.
     hs-source-dirs:   app

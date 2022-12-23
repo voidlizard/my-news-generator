@@ -1,4 +1,4 @@
 cradle:
   cabal:
     - path: "app/Main.hs"
-      component: "get-cfx:exe:get-cfx"
+      component: "my-news-generator:exe:my-news-generator"
