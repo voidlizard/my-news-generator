@@ -97,6 +97,36 @@ common shared-properties
                      , ViewPatterns
 
 
+library my-news-generator-lib
+    import: shared-properties
+
+    hs-source-dirs:   lib
+
+    exposed-modules:  Coinmarketcap
+
+    build-depends:    base ^>=4.15.1.0
+                    , aeson
+                    , bytestring
+                    , containers
+                    , directory
+                    , interpolatedstring-perl6
+                    , http-client
+                    , http-client-tls
+                    , http-conduit
+                    , http-types
+                    , microlens-th
+                    , microlens-platform
+                    , microlens-aeson
+                    , json-stream
+                    , mtl
+                    , prettyprinter
+                    , safe
+                    , text
+                    , curl
+                    , download-curl
+                    , uniplate
+
+
 executable my-news-generator
     import: shared-properties
 
@@ -108,10 +138,9 @@ executable my-news-generator
 
     -- LANGUAGE extensions used by modules in this package.
     other-extensions:
-      ImportQualifiedPost
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.15.1.0
+    build-depends:    base ^>=4.15.1.0, my-news-generator-lib
                     , aeson
                     , bytestring
                     , containers

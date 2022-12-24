@@ -2,3 +2,6 @@ cradle:
   cabal:
     - path: "app/Main.hs"
       component: "my-news-generator:exe:my-news-generator"
+
+    - path: "lib/"
+      component: "lib:my-news-generator-lib"
