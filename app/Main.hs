@@ -89,36 +89,37 @@ instance Pretty Ins where
 
 main :: IO ()
 main = do
+  pure ()
 
-  let proxyFile = "/home/dmz/dmz-data/proxy/65.108.61.217"
-  proxyExists <- doesFileExist proxyFile
+  -- let proxyFile = "/home/dmz/dmz-data/proxy/65.108.61.217"
+  -- proxyExists <- doesFileExist proxyFile
 
-  proxyOpt <- if proxyExists then do
-                txt <- Text.readFile proxyFile
-                let o = Text.strip txt
-                hPutStrLn stderr [qc|proxy set {o}|]
-                pure [CurlProxy (Text.unpack o)]
-              else do
-                hPutStrLn stderr [qc|proxy not set|]
-                pure []
+  -- proxyOpt <- if proxyExists then do
+  --               txt <- Text.readFile proxyFile
+  --               let o = Text.strip txt
+  --               hPutStrLn stderr [qc|proxy set {o}|]
+  --               pure [CurlProxy (Text.unpack o)]
+  --             else do
+  --               hPutStrLn stderr [qc|proxy not set|]
+  --               pure []
 
 
-  let req = "https://www.okx.com/priapi/v5/market/mult-cup-tickers?ccys=BTC,ETH,TON,USDT"
+  -- let req = "https://www.okx.com/priapi/v5/market/mult-cup-tickers?ccys=BTC,ETH,TON,USDT"
 
-  let opts = mconcat [ [CurlFollowLocation True]
-                     , [CurlUserAgent "Mozilla/5.0 (Android 4.4; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0"]
-                     , proxyOpt
-                     ]
+  -- let opts = mconcat [ [CurlFollowLocation True]
+  --                    , [CurlUserAgent "Mozilla/5.0 (Android 4.4; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0"]
+  --                    , proxyOpt
+  --                    ]
 
-  body <- openLazyURIWithOpts opts req >>= either (error.show) pure
-  -- L8.putStr body
+  -- body <- openLazyURIWithOpts opts req >>= either (error.show) pure
+  -- L8.hPutStr stderr body
 
-  let okx = decode body :: Maybe OKXMarketsData
+  -- let okx = decode body :: Maybe OKXMarketsData
 
-  let rates =  [ x | (x :: Ins) <- universeBi okx ]
+  -- let rates =  [ x | (x :: Ins) <- universeBi okx ]
 
-  let ratesDoc = hsep (fmap pretty rates)
+  -- let ratesDoc = hsep (fmap pretty rates)
 
-  putStrLn (show ratesDoc)
+  -- putStrLn (show ratesDoc)
 
 

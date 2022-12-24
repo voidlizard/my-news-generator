@@ -102,7 +102,12 @@ library my-news-generator-lib
 
     hs-source-dirs:   lib
 
-    exposed-modules:  Coinmarketcap
+    exposed-modules:   Coinmarketcap
+                     , OKX
+                     , Data.Facts.Common
+                     , Data.Facts.Currencies
+
+    other-modules:    Data.Facts.Currencies.Orphans
 
     build-depends:    base ^>=4.15.1.0
                     , aeson
@@ -121,6 +126,8 @@ library my-news-generator-lib
                     , mtl
                     , prettyprinter
                     , safe
+                    , time
+                    , timestamp
                     , text
                     , curl
                     , download-curl
