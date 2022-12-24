@@ -123,6 +123,8 @@ executable my-news-generator
                     , http-types
                     , microlens-th
                     , microlens-platform
+                    , microlens-aeson
+                    , json-stream
                     , mtl
                     , prettyprinter
                     , safe
