@@ -1,69 +1,25 @@
 {-# LANGUAGE QuasiQuotes, ExtendedDefaultRules #-}
 {-# LANGUAGE TemplateHaskell #-}
+-- {-# LANGUAGE UndecidableInstances #-}
 
-import Data.ByteString.Lazy.Char8 qualified as L8
-import System.Environment
-import Safe
-import Network.Curl.Download.Lazy
-import Network.Curl.Opts
 
 import Control.Monad
-
-import Text.InterpolatedString.Perl6 (qc)
-import System.Directory
-import System.IO
-
-import Data.Text (Text)
-import Data.Text qualified as Text
-import Data.Text.IO qualified as Text
-
-import Data.Aeson
-
-import Data.Fixed
-import Safe
-
-import Data.Data
-import Data.Generics.Uniplate.Data()
-import Data.Generics.Uniplate.Operations
-import GHC.Generics
-
+import Data.ByteString.Lazy as LBS
+import Data.ByteString.Lazy (ByteString)
+import Data.JsonStream.Parser hiding (Parser)
+import Options.Applicative
+import Data.List qualified as List
+import System.Exit
 import Lens.Micro.Platform
-import Lens.Micro.TH
+
+import Data.Facts.Currencies
+import Coinmarketcap
 
 import Prettyprinter
-
 
 data Color = Red | Green
 
 data Colored a = Colored Color a
-
-newtype OKXMarketsData =
-  OKXMarketsData { _okxMarketsData :: [Ins]
-                 }
-                 deriving (Eq,Ord,Data,Show)
-
-data Ins = Ins { _insTicker  :: Text
-               , _insLast    :: Fixed E2
-               , _insOpen24h :: Fixed E2
-               , _insTs      :: Int
-               }
-               deriving (Eq,Ord,Data,Show)
-
-
-makeLenses ''Ins
-makeLenses ''OKXMarketsData
-
-instance FromJSON OKXMarketsData where
-  parseJSON = withObject "OKXMarketData" $ \o ->
-    OKXMarketsData <$> o .: "data"
-
-instance FromJSON Ins where
-  parseJSON = withObject "Ins" $ \v -> Ins
-        <$> v .: "ccy"
-        <*> (read <$> v .: "last")
-        <*> (read <$> v .: "open24h")
-        <*> (read <$> v .: "ts")
-
 
 newtype AsShow a = AsShow a
 
@@ -75,51 +31,71 @@ instance Pretty Color where
   pretty Green = "#00c000"
 
 instance Pretty a => Pretty (Colored a) where
-  pretty (Colored c x) = "%{F" <> pretty c <> "}" <+> pretty x <> "%{F-}"
+  pretty (Colored c x) = "%{F" <> pretty c <> "}" <> pretty x <> "%{F-}"
 
 
-instance Pretty Ins where
-  pretty ins = pretty (view insTicker ins)
-               <> colon
-               <> pretty (color $ AsShow $ view insLast ins)
+class HasTicker a where
+  tickerSymbol  :: a -> Symbol
+  tickerLow     :: a -> Bool
+  tickerValue   :: Fractional b => a -> b
+
+
+instance HasTicker (Fact (MarketData CMC)) where
+  tickerSymbol  o = case view cmcPair o of
+    CurrencyPair (Symbol a) (Symbol _) -> Symbol a
+
+  tickerLow o = view cmcChange24h o < 0
+
+  tickerValue o = realToFrac (realToFrac (view cmcRate o) :: Fixed E2)
+
+newtype Report t a = Report a
+
+instance HasTicker a => Pretty (Report t a) where
+  pretty (Report o) =
+    pretty (tickerSymbol o)
+    <> colon
+    <+> pretty (color (tickerValue o :: Double))
+
     where
-      color | view insLast ins < view insOpen24h ins = Colored Red
-            | otherwise = Colored Green
+      color | tickerLow o = Colored Red
+            | otherwise   = Colored Green
 
 
 main :: IO ()
-main = do
-  pure ()
+main = join . customExecParser (prefs showHelpOnError) $
+  info (helper <*> parser)
+  (  fullDesc
+  <> header "user report generator"
+  <> progDesc "Generates report"
+  )
+  where
+    parser ::  Parser (IO ())
+    parser = hsubparser ( command "fxrates" (info pCoins (progDesc "coins rates report"))
+                        )
 
-  -- let proxyFile = "/home/dmz/dmz-data/proxy/65.108.61.217"
-  -- proxyExists <- doesFileExist proxyFile
-
-  -- proxyOpt <- if proxyExists then do
-  --               txt <- Text.readFile proxyFile
-  --               let o = Text.strip txt
-  --               hPutStrLn stderr [qc|proxy set {o}|]
-  --               pure [CurlProxy (Text.unpack o)]
-  --             else do
-  --               hPutStrLn stderr [qc|proxy not set|]
-  --               pure []
+    pCoins = do
+     file <- optional $ strOption (  long "file"
+                                   <> short 'f'
+                                   <> metavar "STRING"
+                                   <> help "read from file"
+                                  )
+     pure $ runFxRates file
 
 
-  -- let req = "https://www.okx.com/priapi/v5/market/mult-cup-tickers?ccys=BTC,ETH,TON,USDT"
+runFxRates  :: Maybe String -> IO ()
 
-  -- let opts = mconcat [ [CurlFollowLocation True]
-  --                    , [CurlUserAgent "Mozilla/5.0 (Android 4.4; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0"]
-  --                    , proxyOpt
-  --                    ]
+runFxRates fn = do
+  s <- maybe downloadMarketInfo LBS.readFile fn
 
-  -- body <- openLazyURIWithOpts opts req >>= either (error.show) pure
-  -- L8.hPutStr stderr body
+  let market' = parseLazyByteString marketDataParser s
+  let market = List.filter removeShit market'
+  print (hsep (fmap (pretty.Report) market))
 
-  -- let okx = decode body :: Maybe OKXMarketsData
-
-  -- let rates =  [ x | (x :: Ins) <- universeBi okx ]
-
-  -- let ratesDoc = hsep (fmap pretty rates)
-
-  -- putStrLn (show ratesDoc)
+  where
+    removeShit item = not ton || view cmcName item == "Toncoin"
+      where
+        ton = case view cmcPair item of
+               CurrencyPair "TON" _ -> True
+               _                    -> False
 
 

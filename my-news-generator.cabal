@@ -162,6 +162,7 @@ executable my-news-generator
                     , microlens-aeson
                     , json-stream
                     , mtl
+                    , optparse-applicative
                     , prettyprinter
                     , safe
                     , text

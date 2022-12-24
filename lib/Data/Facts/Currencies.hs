@@ -9,11 +9,14 @@ import Data.String (IsString(..))
 import Data.Data
 
 import Data.Fixed
+import Prettyprinter
 
 import Data.Facts.Currencies.Orphans()
 
+data MarketData a
+
 newtype Symbol = Symbol Text
-                 deriving newtype (Eq,Ord,IsString,Read)
+                 deriving newtype (Eq,Ord,IsString,Read,Pretty)
                  deriving stock (Show,Data)
 
 data family ExchangeRate prec

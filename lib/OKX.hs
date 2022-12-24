@@ -10,8 +10,6 @@ import Data.Time.Clock.POSIX
 import Data.Facts.Common
 import Data.Facts.Currencies
 
-data MarketData a
-
 data OKX
 
 deriving stock instance Data OKX
@@ -43,7 +41,7 @@ marketDataParser = "data" .: many ( arrayOf entry )
     symbol x = Symbol <$> x .: string
     rate  = read . Text.unpack <$> "last" .: string
     open24 = read . Text.unpack <$> "open24h" .: string
-    ts = posixFromMillis . read . Text.unpack <$> ( "ts" .: string )
+    ts = posixFromMillis @Integer . read . Text.unpack <$> ( "ts" .: string )
 
 -- from where? raw file, http request, proxy-shmoxy, etc
 -- what exactly? fxrate, volume,  24h change, etc
