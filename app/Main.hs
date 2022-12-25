@@ -5,6 +5,7 @@
 
 import Control.Monad
 import Data.ByteString.Lazy as LBS
+import Data.ByteString.Lazy.Char8 as LBS8
 import Data.ByteString.Lazy (ByteString)
 import Data.JsonStream.Parser hiding (Parser)
 import Options.Applicative
@@ -70,7 +71,8 @@ main = join . customExecParser (prefs showHelpOnError) $
   )
   where
     parser ::  Parser (IO ())
-    parser = hsubparser ( command "fxrates" (info pCoins (progDesc "coins rates report"))
+    parser = hsubparser (  command "fxrates" (info pCoins (progDesc "coins rates report"))
+                        <> command "fxrates-json" (info pFxRatesJson (progDesc "fx rates json"))
                         )
 
     pCoins = do
@@ -80,6 +82,8 @@ main = join . customExecParser (prefs showHelpOnError) $
                                    <> help "read from file"
                                   )
      pure $ runFxRates file
+
+    pFxRatesJson = pure runFxRatesJson
 
 
 runFxRates  :: Maybe String -> IO ()
@@ -98,4 +102,6 @@ runFxRates fn = do
                CurrencyPair "TON" _ -> True
                _                    -> False
 
+runFxRatesJson :: IO ()
+runFxRatesJson = downloadMarketInfo >>= LBS.putStrLn
 
