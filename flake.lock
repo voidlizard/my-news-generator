@@ -1,54 +1,5 @@
 {
   "nodes": {
-    "binary-bits": {
-      "inputs": {
-        "haskell-flake-utils": [
-          "haskell-flake-utils"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1653614005,
-        "narHash": "sha256-UTTxqXsJZ3OPCW3j0Dau1rY6CQ6rcA+kNb/szaVgQnA=",
-        "owner": "ivanovs-4",
-        "repo": "binary-bits",
-        "rev": "a0649d383c095351adead34c6e573c878b0158bf",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ivanovs-4",
-        "repo": "binary-bits",
-        "type": "github"
-      }
-    },
-    "codec": {
-      "inputs": {
-        "binary-bits": [
-          "binary-bits"
-        ],
-        "haskell-flake-utils": [
-          "haskell-flake-utils"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1656666695,
-        "narHash": "sha256-pFwDSf4z5bgxHBtZCyETG3AZaLQUpz+rCMTJO3l6jMQ=",
-        "owner": "ivanovs-4",
-        "repo": "codec",
-        "rev": "b0b786fc39178d60b946bfa533a024da0439cc70",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ivanovs-4",
-        "repo": "codec",
-        "type": "github"
-      }
-    },
     "flake-utils": {
       "locked": {
         "lastModified": 1644229661,
@@ -100,8 +51,6 @@
     },
     "root": {
       "inputs": {
-        "binary-bits": "binary-bits",
-        "codec": "codec",
         "haskell-flake-utils": "haskell-flake-utils",
         "nixpkgs": "nixpkgs"
       }
