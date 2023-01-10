@@ -4,6 +4,8 @@ description = "my-news-generator";
 inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-22.11";
     haskell-flake-utils.url = "github:ivanovs-4/haskell-flake-utils";
+    hspup.url = "github:voidlizard/hspup";
+    hspup.inputs.nixpkgs.follows = "nixpkgs";
 };
 
 outputs = { self, nixpkgs, haskell-flake-utils, ... }@inputs:
@@ -42,6 +44,7 @@ outputs = { self, nixpkgs, haskell-flake-utils, ... }@inputs:
       shellExtBuildInputs = {pkgs}: with pkgs; [
         haskellPackages.haskell-language-server
         jq
+        inputs.hspup.packages.${pkgs.system}.default
       ];
 
   };

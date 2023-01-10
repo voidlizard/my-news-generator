@@ -104,6 +104,7 @@ library my-news-generator-lib
 
     exposed-modules:   Coinmarketcap
                      , OKX
+                     , CBR
                      , Data.Facts.Common
                      , Data.Facts.Currencies
 

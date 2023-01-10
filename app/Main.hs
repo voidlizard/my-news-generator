@@ -12,9 +12,16 @@ import Options.Applicative
 import Data.List qualified as List
 import System.Exit
 import Lens.Micro.Platform
+import Data.Maybe
+import Data.Generics.Uniplate.Data()
+import Data.Generics.Uniplate.Operations
+import Safe
+import Numeric
 
 import Data.Facts.Currencies
 import Coinmarketcap
+import CBR qualified as CBR
+import CBR (Fact(..),USDRUB)
 
 import Prettyprinter
 
@@ -73,6 +80,7 @@ main = join . customExecParser (prefs showHelpOnError) $
     parser ::  Parser (IO ())
     parser = hsubparser (  command "fxrates" (info pCoins (progDesc "coins rates report"))
                         <> command "fxrates-json" (info pFxRatesJson (progDesc "fx rates json"))
+                        <> command "cbr" (info pCBR (progDesc "fxrates rouble"))
                         )
 
     pCoins = do
@@ -84,6 +92,8 @@ main = join . customExecParser (prefs showHelpOnError) $
      pure $ runFxRates file
 
     pFxRatesJson = pure runFxRatesJson
+
+    pCBR = pure runCBR
 
 
 runFxRates  :: Maybe String -> IO ()
@@ -104,4 +114,13 @@ runFxRates fn = do
 
 runFxRatesJson :: IO ()
 runFxRatesJson = downloadMarketInfo >>= LBS.putStrLn
+
+
+runCBR :: IO ()
+runCBR = do
+  cbr <- CBR.download <&> parseLazyByteString CBR.parseCBR
+  let rate = headMay [ x | x :: Fact USDRUB <- universeBi cbr ]
+  print (pretty rate)
+
+
 
