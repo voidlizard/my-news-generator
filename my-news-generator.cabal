@@ -105,6 +105,7 @@ library my-news-generator-lib
     exposed-modules:   Coinmarketcap
                      , OKX
                      , CBR
+                     , YandexMusic
                      , Data.Facts.Common
                      , Data.Facts.Currencies
 

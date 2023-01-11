@@ -15,6 +15,7 @@ import Lens.Micro.Platform
 import Data.Maybe
 import Data.Generics.Uniplate.Data()
 import Data.Generics.Uniplate.Operations
+import Data.Text.IO qualified as Text
 import Safe
 import Numeric
 
@@ -22,6 +23,7 @@ import Data.Facts.Currencies
 import Coinmarketcap
 import CBR qualified as CBR
 import CBR (Fact(..),USDRUB)
+import YandexMusic qualified as YandexMusic
 
 import Prettyprinter
 
@@ -81,6 +83,7 @@ main = join . customExecParser (prefs showHelpOnError) $
     parser = hsubparser (  command "fxrates" (info pCoins (progDesc "coins rates report"))
                         <> command "fxrates-json" (info pFxRatesJson (progDesc "fx rates json"))
                         <> command "cbr" (info pCBR (progDesc "fxrates rouble"))
+                        <> command "yandex-music-song" (info pYaMusic (progDesc "yandex music song in firefox"))
                         )
 
     pCoins = do
@@ -94,6 +97,8 @@ main = join . customExecParser (prefs showHelpOnError) $
     pFxRatesJson = pure runFxRatesJson
 
     pCBR = pure runCBR
+
+    pYaMusic = pure runYaMusic
 
 
 runFxRates  :: Maybe String -> IO ()
@@ -121,6 +126,11 @@ runCBR = do
   cbr <- CBR.download <&> parseLazyByteString CBR.parseCBR
   let rate = headMay [ x | x :: Fact USDRUB <- universeBi cbr ]
   print (pretty rate)
+
+
+runYaMusic :: IO ()
+runYaMusic = do
+  YandexMusic.seekSong >>= Text.putStrLn
 
 
 
