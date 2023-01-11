@@ -14,15 +14,15 @@ import System.IO
 import Safe
 
 
-seekSong :: IO (Maybe Text)
+seekSong :: IO [Text]
 seekSong = do
   s <- runExceptT $ liftIO $ LBS.hGetContents stdin <&> parseLazyByteString p
 
   let ss = either (const mempty) id s
 
-  let song = headMay [ title
-                     | x@("https://music.yandex.ru/home", title) :: (Text,Text) <- universeBi ss
-                     ]
+  let song = [ title
+             | x@("https://music.yandex.ru/home", title) :: (Text,Text) <- universeBi ss
+             ]
   pure song
 
   where

@@ -130,8 +130,7 @@ runCBR = do
 
 runYaMusic :: IO ()
 runYaMusic = do
-  song <- YandexMusic.seekSong
-  maybe exitFailure Text.putStrLn song
+  YandexMusic.seekSong >>= mapM_ Text.putStrLn
 
 
 
