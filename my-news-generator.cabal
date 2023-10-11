@@ -111,7 +111,7 @@ library my-news-generator-lib
 
     other-modules:    Data.Facts.Currencies.Orphans
 
-    build-depends:    base ^>=4.15.1.0
+    build-depends:    base >=4.15.1.0
                     , aeson
                     , bytestring
                     , containers
