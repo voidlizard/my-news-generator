@@ -149,7 +149,7 @@ executable my-news-generator
     other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.15.1.0, my-news-generator-lib
+    build-depends:    base >=4.15.1.0, my-news-generator-lib
                     , aeson
                     , bytestring
                     , containers
