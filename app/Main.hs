@@ -118,7 +118,7 @@ runFxRates fn = do
                _                    -> False
 
 runFxRatesJson :: IO ()
-runFxRatesJson = downloadMarketInfo >>= LBS.putStrLn
+runFxRatesJson = downloadMarketInfo >>= LBS8.putStrLn
 
 
 runCBR :: IO ()
