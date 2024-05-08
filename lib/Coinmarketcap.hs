@@ -33,6 +33,7 @@ data instance Fact (MarketData CMC) =
   CMCMarketData
   { _cmcPair      :: CurrencyPair Symbol
   , _cmcName      :: Text
+  , _cmcSlug      :: Text
   , _cmcRate      :: ExchangeRate E6
   , _cmcChange24h :: ExchangeRate E6
   , _cmcTimestamp :: POSIXTime
@@ -62,10 +63,11 @@ downloadMarketInfo = do
 marketDataParser :: Parser (Fact (MarketData CMC))
 marketDataParser = "data" .: objectValues (arrayOf fact)
   where
-    fact = CMCMarketData <$> pair <*> name <*> rate <*> change24 <*> ts
+    fact = CMCMarketData <$> pair <*> name <*> slug <*> rate <*> change24 <*> ts
     symbol x = Symbol <$> x .: string
     pair  = CurrencyPair <$> symbol "symbol" <*> pure "USD"
     name = "name" .: string
+    slug = "slug" .: string
     rate = realToFrac <$> "quote" .: "USD" .: "price" .: number
     change24 = realToFrac <$> "quote" .: "USD" .: "percent_change_24h" .: number
     ts = "quote" .: "USD" .: "last_updated" .: posix

@@ -1,5 +1,6 @@
 {-# LANGUAGE QuasiQuotes, ExtendedDefaultRules #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE RecordWildCards #-}
 -- {-# LANGUAGE UndecidableInstances #-}
 
 
@@ -111,7 +112,9 @@ runFxRates fn = do
   print (hsep (fmap (pretty.Report) market))
 
   where
-    removeShit item = not ton || view cmcName item == "Toncoin"
+    removeShit item@CMCMarketData{..} =
+      (not ton || view cmcName item == "Toncoin")
+      && _cmcSlug `List.elem` ["bitcoin","ethereum","toncoin"]
       where
         ton = case view cmcPair item of
                CurrencyPair "TON" _ -> True

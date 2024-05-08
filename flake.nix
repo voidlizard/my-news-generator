@@ -2,7 +2,7 @@
 description = "my-news-generator";
 
 inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.11";
+    nixpkgs.url = "github:nixos/nixpkgs?rev=442d407992384ed9c0e6d352de75b69079904e4e";
     haskell-flake-utils.url = "github:ivanovs-4/haskell-flake-utils";
     hspup.url = "github:voidlizard/hspup";
     hspup.inputs.nixpkgs.follows = "nixpkgs";
