@@ -134,6 +134,7 @@ library my-news-generator-lib
                     , curl
                     , download-curl
                     , uniplate
+                    , unliftio
 
 
 executable my-news-generator
@@ -171,6 +172,7 @@ executable my-news-generator
                     , curl
                     , download-curl
                     , uniplate
+                    , unliftio
 
     -- Directories containing source files.
     hs-source-dirs:   app
